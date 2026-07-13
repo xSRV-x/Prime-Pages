@@ -808,4 +808,23 @@ async function saveInquiryToDatabase(inquiry) {
     list.unshift(inquiry);
     localStorage.setItem(STORAGE_KEYS.INQUIRIES, JSON.stringify(list));
 }
+
+// 9. Back to Top Button
+const backToTopBtn = document.getElementById('back-to-top');
+if (backToTopBtn) {
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 400) {
+            backToTopBtn.classList.add('show');
+        } else {
+            backToTopBtn.classList.remove('show');
+        }
+    });
+
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
 });
