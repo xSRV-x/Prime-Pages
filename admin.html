@@ -191,7 +191,8 @@
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            overflow: hidden;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .admin-table {
@@ -306,6 +307,53 @@
             margin-top: -0.8rem;
             margin-bottom: 1.2rem;
             display: block;
+        }
+
+        /* Mobile Responsive adjustments for Admin Dashboard */
+        @media (max-width: 992px) {
+            .admin-body {
+                flex-direction: column;
+            }
+            .admin-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 1.5rem;
+                gap: 1.5rem;
+            }
+            .sidebar-brand {
+                padding-bottom: 1rem;
+            }
+            .sidebar-menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .menu-item {
+                flex-grow: 1;
+            }
+            .menu-item button {
+                justify-content: center;
+                font-size: 0.9rem;
+                padding: 0.6rem 1rem;
+            }
+            .admin-sidebar > div {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+                border-top: none !important;
+                width: 100%;
+            }
+            .admin-main {
+                padding: 1.5rem;
+            }
+            .admin-header {
+                margin-bottom: 2rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .admin-header h2 {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
