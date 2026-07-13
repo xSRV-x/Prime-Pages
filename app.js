@@ -449,38 +449,50 @@ Estimated Price: BDT ${totalEstimate}`;
             const userMessage = document.getElementById('user-message').value;
 
             // Handle file upload if present
-            const file = userFilesInput ? userFilesInput.files[0] : null;
             let fileUrl = "";
+            if (userFilesInput && userFilesInput.files.length > 0) {
+                const files = Array.from(userFilesInput.files);
+                const uploadedUrls = [];
 
-            if (file) {
                 if (btnSubmitForm) {
                     btnSubmitForm.disabled = true;
-                    btnSubmitForm.innerHTML = `Uploading Files... <i class="fa-solid fa-spinner fa-spin" style="margin-left: 8px;"></i>`;
+                    btnSubmitForm.innerHTML = `Uploading Files (0/${files.length})... <i class="fa-solid fa-spinner fa-spin" style="margin-left: 8px;"></i>`;
                 }
 
-                if (isSupabaseConfigured) {
-                    try {
-                        const fileExt = file.name.split('.').pop();
-                        const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
-                        const { data, error } = await supabaseClient.storage
-                            .from('order-files')
-                            .upload(fileName, file);
-
-                        if (!error) {
-                            const { data: urlData } = supabaseClient.storage
-                                .from('order-files')
-                                .getPublicUrl(fileName);
-                            fileUrl = urlData.publicUrl;
-                        } else {
-                            console.error("Supabase Storage upload error:", error.message);
-                            alert("File upload failed, but order submission will continue.");
-                        }
-                    } catch (err) {
-                        console.error("Storage error:", err);
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (btnSubmitForm) {
+                        btnSubmitForm.innerHTML = `Uploading Files (${i + 1}/${files.length})... <i class="fa-solid fa-spinner fa-spin" style="margin-left: 8px;"></i>`;
                     }
-                } else {
-                    // Local Mock Mode fallback
-                    fileUrl = `[Mock Upload] ${file.name}`;
+
+                    if (isSupabaseConfigured) {
+                        try {
+                            const fileExt = file.name.split('.').pop();
+                            const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${i}.${fileExt}`;
+                            const { data, error } = await supabaseClient.storage
+                                .from('order-files')
+                                .upload(fileName, file);
+
+                            if (!error) {
+                                const { data: urlData } = supabaseClient.storage
+                                    .from('order-files')
+                                    .getPublicUrl(fileName);
+                                uploadedUrls.push(urlData.publicUrl);
+                            } else {
+                                console.error("Supabase Storage upload error:", error.message);
+                                alert(`Upload failed for "${file.name}": ${error.message}\n\nTip: Please make sure you have created a public bucket named 'order-files' in your Supabase Dashboard under Storage.`);
+                            }
+                        } catch (err) {
+                            console.error("Storage error:", err);
+                        }
+                    } else {
+                        // Local Mock Mode fallback
+                        uploadedUrls.push(`[Mock Upload] ${file.name}`);
+                    }
+                }
+
+                if (uploadedUrls.length > 0) {
+                    fileUrl = uploadedUrls.join(', ');
                 }
             }
 

@@ -470,9 +470,14 @@ function renderInquiriesTable(items) {
         const date = new Date(item.created_at).toLocaleString();
         
         const fileCell = item.fileUrl ? 
-            (item.fileUrl.startsWith('http') ? 
-                `<a href="${item.fileUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-color: var(--accent-gold); color: var(--accent-gold); display: inline-flex; align-items: center; gap: 0.25rem;"><i class="fa-solid fa-download"></i> Download</a>` : 
-                `<span style="color: var(--accent-gold); font-size: 0.8rem;">${item.fileUrl}</span>`) : 
+            item.fileUrl.split(',').map((url, idx) => {
+                const trimmedUrl = url.trim();
+                if (trimmedUrl.startsWith('http')) {
+                    return `<a href="${trimmedUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.2rem 0.4rem; font-size: 0.72rem; border-color: var(--accent-gold); color: var(--accent-gold); display: inline-flex; align-items: center; gap: 0.25rem; margin-bottom: 0.25rem; margin-right: 0.25rem;"><i class="fa-solid fa-download"></i> File ${idx + 1}</a>`;
+                } else {
+                    return `<span style="color: var(--accent-gold); font-size: 0.75rem; display: block; margin-bottom: 0.25rem;">${trimmedUrl}</span>`;
+                }
+            }).join('') : 
             `<span style="color: var(--text-muted);">None</span>`;
 
         const statusVal = item.status || 'New';
