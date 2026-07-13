@@ -56,6 +56,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminSidebar = document.getElementById('admin-sidebar');
     const adminMain = document.getElementById('admin-main');
 
+    async function getAdminPasscode() {
+        // Check local storage first
+        let localPass = localStorage.getItem('prime_pages_admin_passcode');
+        if (localPass) return localPass;
+
+        // Check Supabase
+        if (isSupabaseConfigured) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('prices')
+                    .select('admin_passcode')
+                    .single();
+                if (data && data.admin_passcode) {
+                    return data.admin_passcode;
+                }
+            } catch (err) {
+                console.log("admin_passcode column not found in database, using default.");
+            }
+        }
+        return 'admin123';
+    }
+
     function checkAuth() {
         if (sessionStorage.getItem('admin_auth') === 'true') {
             loginWrapper.style.display = 'none';
@@ -70,21 +92,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const passcode = passcodeField.value.trim();
             
-            // Default passcode is admin123. You can change this here.
-            if (passcode === 'admin123') {
+            const correctPasscode = await getAdminPasscode();
+            if (passcode === correctPasscode) {
                 sessionStorage.setItem('admin_auth', 'true');
                 checkAuth();
             } else {
-                alert('Invalid Passcode! Try "admin123".');
+                alert('Invalid Passcode! Please try again.');
                 passcodeField.value = '';
                 passcodeField.focus();
             }
         });
     }
+
+    window.getAdminPasscode = getAdminPasscode;
 
     window.logoutAdmin = () => {
         sessionStorage.removeItem('admin_auth');
@@ -103,6 +127,7 @@ function initializeDashboard() {
     setupImageUploader();
     checkSetupWarning();
     loadAllDashboardData();
+    setupSecurityForm();
 }
 
 function checkSetupWarning() {
@@ -550,3 +575,67 @@ async function updateInquiryStatus(key, newStatus) {
     loadAllDashboardData();
 }
 window.updateInquiryStatus = updateInquiryStatus;
+
+function setupSecurityForm() {
+    const changePasscodeForm = document.getElementById('change-passcode-form');
+    if (!changePasscodeForm) return;
+
+    changePasscodeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const currentPass = document.getElementById('current-passcode').value.trim();
+        const newPass = document.getElementById('new-passcode').value.trim();
+        const confirmNewPass = document.getElementById('confirm-new-passcode').value.trim();
+
+        if (typeof window.getAdminPasscode !== 'function') {
+            alert("Security system initialization error.");
+            return;
+        }
+
+        const correctPasscode = await window.getAdminPasscode();
+
+        if (currentPass !== correctPasscode) {
+            alert("Current passcode is incorrect!");
+            return;
+        }
+
+        if (newPass !== confirmNewPass) {
+            alert("New passcode and confirmation do not match!");
+            return;
+        }
+
+        if (newPass.length < 4) {
+            alert("New passcode must be at least 4 characters long.");
+            return;
+        }
+
+        // Save new passcode locally
+        localStorage.setItem('prime_pages_admin_passcode', newPass);
+
+        if (isSupabaseConfigured) {
+            try {
+                // Update prices table with new passcode
+                const { data: pricesList } = await supabaseClient.from('prices').select('id');
+                const priceRecordId = (pricesList && pricesList.length > 0) ? pricesList[0].id : 1;
+
+                const { error } = await supabaseClient
+                    .from('prices')
+                    .update({ admin_passcode: newPass })
+                    .eq('id', priceRecordId);
+
+                if (error) {
+                    console.error("Supabase passcode save failed:", error.message);
+                    alert("Passcode updated locally in this browser. To sync across all devices, run the SQL query to add the passcode column in your Supabase Dashboard.");
+                } else {
+                    alert("Passcode updated successfully and synced to Supabase Cloud!");
+                }
+            } catch (err) {
+                console.error("Database save failed:", err);
+                alert("Passcode updated locally. (Supabase sync failed: admin_passcode column might not exist yet).");
+            }
+        } else {
+            alert("Passcode updated locally in Mock Mode!");
+        }
+
+        changePasscodeForm.reset();
+    });
+}

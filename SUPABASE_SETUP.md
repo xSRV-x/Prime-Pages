@@ -41,12 +41,13 @@ CREATE TABLE prices (
     leather numeric DEFAULT 800,
     "paperIvory" numeric DEFAULT 4,
     "paperMatte" numeric DEFAULT 6,
-    "paperLustre" numeric DEFAULT 8
+    "paperLustre" numeric DEFAULT 8,
+    admin_passcode text DEFAULT 'admin123'
 );
 
 -- Seed initial prices row
-INSERT INTO prices (id, notebook, magazine, travel, album, softcover, hardcover, leather, "paperIvory", "paperMatte", "paperLustre")
-VALUES (1, 450, 850, 950, 1800, 0, 350, 800, 4, 6, 8)
+INSERT INTO prices (id, notebook, magazine, travel, album, softcover, hardcover, leather, "paperIvory", "paperMatte", "paperLustre", admin_passcode)
+VALUES (1, 450, 850, 950, 1800, 0, 350, 800, 4, 6, 8, 'admin123')
 ON CONFLICT (id) DO NOTHING;
 
 -- 2. Create Showcase Table
@@ -118,4 +119,12 @@ USING (bucket_id = 'order-files');
 2. The warning pill at the top right should change from **Local Mock Mode** to **Supabase Live**!
 3. Now, when customers submit the Order Form, the details will instantly appear under the **Inquiries** tab in your Admin Panel and in your Supabase Dashboard!
 4. Clicking the **Download** button in the inquiries table will download the original high-resolution file.
+
+---
+
+## 7. Database Updates (For Existing Setups)
+If you have already set up your database and want to support cross-device **passcode changes**, copy and run the following command in your Supabase **SQL Editor**:
+```sql
+ALTER TABLE prices ADD COLUMN IF NOT EXISTS admin_passcode text DEFAULT 'admin123';
+```
 
