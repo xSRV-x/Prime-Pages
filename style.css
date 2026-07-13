@@ -711,6 +711,8 @@ button, input, select, textarea {
 }
 
 .config-select {
+    width: 100%;
+    max-width: 100%;
     background-color: rgba(0, 0, 0, 0.3);
     border: 1px solid var(--border-color);
     color: #fff;
@@ -1505,6 +1507,25 @@ button, input, select, textarea {
     
     .badge-float .number {
         font-size: 1.4rem;
+    }
+
+    /* Calculator & Specs Card Mobile Padding Optimization */
+    .config-wizard {
+        padding: 1.5rem 1.2rem;
+        gap: 1.5rem;
+    }
+    
+    .summary-card {
+        padding: 1.5rem 1.2rem;
+    }
+    
+    .config-options-grid {
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: 0.75rem;
+    }
+    
+    .option-card {
+        padding: 1.2rem 0.75rem;
     }
 }
 
