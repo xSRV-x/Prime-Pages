@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Prime Pages - Premium customized notebooks, photo magazines, travel journals, and family albums. Handcrafted memory preservation.">
+    <title>Prime Pages | Premium Custom Notebooks & Photo Magazines</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Supabase CDN Client Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="header" id="header">
+        <div class="nav-container">
+            <a href="#" class="logo-area" id="logo-link">
+                <img src="assets/logo.png" alt="Prime Pages Logo" class="brand-logo" id="brand-logo">
+            </a>
+            
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="#hero" class="nav-link active">Home</a></li>
+                    <li><a href="#products" class="nav-link">Products</a></li>
+                    <li><a href="#calculator" class="nav-link">Calculator</a></li>
+                    <li><a href="#philosophy" class="nav-link">Philosophy</a></li>
+                    <li><a href="#contact" class="nav-link">Order/Inquiry</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="#calculator" class="btn btn-nav">Build Yours</a>
+                <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <span class="hero-sub">Handcrafted Memories & Bespoke Prints</span>
+                <h1 class="hero-title">Preserve Your Stories In Premium Print.</h1>
+                <p class="hero-desc">We transform your memories, notes, and journeys into beautifully bound notebooks, photo magazines, and timeless albums.</p>
+                <div class="hero-btns">
+                    <a href="#products" class="btn btn-primary">Explore Catalog</a>
+                    <a href="#calculator" class="btn btn-secondary">Design Custom Book</a>
+                </div>
+            </div>
+            
+            <div class="hero-gallery">
+                <div class="gallery-track">
+                    <div class="gallery-card active" data-index="0">
+                        <img src="assets/notebook.jpg" alt="Custom Notebook">
+                        <div class="gallery-info">
+                            <h4>Custom Notebooks</h4>
+                            <p>Bespoke spiral bound premium notebooks</p>
+                        </div>
+                    </div>
+                    <div class="gallery-card" data-index="1">
+                        <img src="assets/magazine.png" alt="Photo Magazine">
+                        <div class="gallery-info">
+                            <h4>Photo Magazines</h4>
+                            <p>Bespoke visual narratives</p>
+                        </div>
+                    </div>
+                    <div class="gallery-card" data-index="2">
+                        <img src="assets/travel.png" alt="Travel Magazine">
+                        <div class="gallery-info">
+                            <h4>Travel Magazines</h4>
+                            <p>For the paths you walked</p>
+                        </div>
+                    </div>
+                    <div class="gallery-card" data-index="3">
+                        <img src="assets/album.png" alt="Family Photo Album">
+                        <div class="gallery-info">
+                            <h4>Family Photo Albums</h4>
+                            <p>Preserving generations</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-nav">
+                    <button class="nav-btn prev-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="nav-btn next-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Showcase Section -->
+    <section class="products-section" id="products">
+        <div class="section-header">
+            <span class="section-subtitle">Our Offerings</span>
+            <h2 class="section-title">The Art of Tangible Formats</h2>
+            <div class="header-line"></div>
+        </div>
+
+        <div class="products-grid">
+            <!-- Product 1 -->
+            <div class="product-card" data-product="notebook">
+                <div class="product-img-wrapper">
+                    <img src="assets/notebook.jpg" alt="Customized Notebook" class="product-image">
+                    <div class="product-overlay">
+                        <button class="btn btn-card-action" onclick="quickSelect('notebook')">Configure Now</button>
+                    </div>
+                </div>
+                <div class="product-details">
+                    <h3>Customized Notebooks</h3>
+                    <p class="product-description">Handcrafted leather or linen covers with premium ruled, dotted, or blank ivory paper. Personalize with name debossing or gold leaf foil lettering.</p>
+                    <ul class="product-features">
+                        <li><i class="fa-solid fa-check"></i> Premium spiral binding</li>
+                        <li><i class="fa-solid fa-check"></i> Debossed customization</li>
+                        <li><i class="fa-solid fa-check"></i> 120 GSM Acid-free paper</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card" data-product="magazine">
+                <div class="product-img-wrapper">
+                    <img src="assets/magazine.png" alt="Photo Magazine" class="product-image">
+                    <div class="product-overlay">
+                        <button class="btn btn-card-action" onclick="quickSelect('magazine')">Configure Now</button>
+                    </div>
+                </div>
+                <div class="product-details">
+                    <h3>Photo Magazines</h3>
+                    <p class="product-description">Sleek, high-fashion layout designs for portfolios, exhibitions, or artistic photography. Printed on fine art matte or semi-gloss paper.</p>
+                    <ul class="product-features">
+                        <li><i class="fa-solid fa-check"></i> Editorial layouts</li>
+                        <li><i class="fa-solid fa-check"></i> Lustre/Matte finish options</li>
+                        <li><i class="fa-solid fa-check"></i> Perfect glue bound</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card" data-product="travel">
+                <div class="product-img-wrapper">
+                    <img src="assets/travel.png" alt="Travel Magazine" class="product-image">
+                    <div class="product-overlay">
+                        <button class="btn btn-card-action" onclick="quickSelect('travel')">Configure Now</button>
+                    </div>
+                </div>
+                <div class="product-details">
+                    <h3>Travel Magazines</h3>
+                    <p class="product-description">Document your journeys, logs, and adventures with high-quality landscape photos and structured travel diaries that tell a story.</p>
+                    <ul class="product-features">
+                        <li><i class="fa-solid fa-check"></i> Map & itinerary integration</li>
+                        <li><i class="fa-solid fa-check"></i> Scratch-resistant covers</li>
+                        <li><i class="fa-solid fa-check"></i> Custom adventure templates</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="product-card" data-product="album">
+                <div class="product-img-wrapper">
+                    <img src="assets/album.png" alt="Family Photo Album" class="product-image">
+                    <div class="product-overlay">
+                        <button class="btn btn-card-action" onclick="quickSelect('album')">Configure Now</button>
+                    </div>
+                </div>
+                <div class="product-details">
+                    <h3>Family Photo Albums</h3>
+                    <p class="product-description">Heirloom-grade binding designed to stand the test of time. Thick board pages, luxury fabric covers, and keepsake boxes.</p>
+                    <ul class="product-features">
+                        <li><i class="fa-solid fa-check"></i> Heavyweight board pages</li>
+                        <li><i class="fa-solid fa-check"></i> Linen, velvet, or leather covers</li>
+                        <li><i class="fa-solid fa-check"></i> Protective display box option</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Showcase Gallery -->
+        <div class="dynamic-gallery-container" id="dynamic-gallery-container" style="display:none; margin-top: 5rem; border-top: 1px solid var(--border-color); padding-top: 5rem;">
+            <span class="section-subtitle">Portfolio</span>
+            <h3 class="section-title" style="font-size: 2.2rem; text-align: center; margin-bottom: 3rem;">Recent Custom Works</h3>
+            <div class="dynamic-gallery-grid" id="dynamic-gallery-grid">
+                <!-- Dynamically loaded uploads go here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Configurator / Price Tool Section -->
+    <section class="calculator-section" id="calculator">
+        <div class="section-header">
+            <span class="section-subtitle">Design Studio</span>
+            <h2 class="section-title">Configure & Calculate Price</h2>
+            <div class="header-line"></div>
+        </div>
+
+        <div class="config-container">
+            <div class="config-wizard">
+                <!-- Step 1: Product Selection -->
+                <div class="config-step" data-step="1">
+                    <h4 class="step-title"><span class="step-num">01</span> Choose Product</h4>
+                    <div class="config-options-grid" id="product-options">
+                        <div class="option-card selected" data-value="notebook" data-price="450">
+                            <i class="fa-solid fa-book"></i>
+                            <span>Notebook</span>
+                        </div>
+                        <div class="option-card" data-value="magazine" data-price="850">
+                            <i class="fa-solid fa-images"></i>
+                            <span>Photo Magazine</span>
+                        </div>
+                        <div class="option-card" data-value="travel" data-price="950">
+                            <i class="fa-solid fa-compass"></i>
+                            <span>Travel Magazine</span>
+                        </div>
+                        <div class="option-card" data-value="album" data-price="1800">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                            <span>Photo Album</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Cover Options -->
+                <div class="config-step" data-step="2">
+                    <h4 class="step-title"><span class="step-num">02</span> Cover Material & Finish</h4>
+                    <div class="config-options-grid" id="cover-options">
+                        <div class="option-card selected" data-value="softcover" data-add-price="0">
+                            <i class="fa-regular fa-clone"></i>
+                            <span>Premium Softcover</span>
+                        </div>
+                        <div class="option-card" data-value="hardcover" data-add-price="350">
+                            <i class="fa-solid fa-square-full"></i>
+                            <span>Linen Hardcover</span>
+                        </div>
+                        <div class="option-card" data-value="leather" data-add-price="800">
+                            <i class="fa-solid fa-ribbon"></i>
+                            <span>Faux Leather Debossed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Size & Pages -->
+                <div class="config-step" data-step="3">
+                    <h4 class="step-title"><span class="step-num">03</span> Dimensions & Paper</h4>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="config-size">Size Format</label>
+                            <select id="config-size" class="config-select">
+                                <option value="A5" data-multiplier="1.0">A5 Portrait (Standard)</option>
+                                <option value="Square" data-multiplier="1.2">Square (8" x 8")</option>
+                                <option value="A4" data-multiplier="1.4">A4 Landscape (Large)</option>
+                            </select>
+                        </div>
+                        <div class="form-group col">
+                            <label for="config-paper">Paper Type</label>
+                            <select id="config-paper" class="config-select">
+                                <option value="ivory-120" data-add-page-price="4">120 GSM Premium Ivory</option>
+                                <option value="matte-170" data-add-page-price="6">170 GSM Editorial Matte</option>
+                                <option value="lustre-200" data-add-page-price="8">200 GSM Photo Lustre</option>
+                                <option value="glossy-200" data-add-page-price="10">200 GSM Glossy Premium</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 1rem;">
+                        <div class="form-group col">
+                            <label for="config-binding">Binding Method</label>
+                            <select id="config-binding" class="config-select">
+                                <!-- Loaded dynamically in JS -->
+                            </select>
+                        </div>
+                        <div class="form-group col">
+                            <label for="config-delivery">Delivery Area</label>
+                            <select id="config-delivery" class="config-select">
+                                <option value="inside" data-charge="80">Inside Chattogram (+BDT 80)</option>
+                                <option value="outside" data-charge="120">Outside Chattogram (+BDT 120)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row-slider">
+                        <div class="slider-label">
+                            <span>Number of Pages / Sheets:</span>
+                            <span id="page-value" class="slider-val">60</span>
+                        </div>
+                        <input type="range" id="config-pages" min="20" max="200" step="10" value="60" class="config-slider">
+                        <div class="slider-limits">
+                            <span>20 pages</span>
+                            <span>200 pages</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Summary Card -->
+            <div class="config-summary">
+                <div class="summary-card">
+                    <h3 class="summary-heading">Your Spec Card</h3>
+                    
+                    <div class="summary-specs">
+                        <div class="spec-row">
+                            <span>Product:</span>
+                            <strong id="summary-product">Customized Notebook</strong>
+                        </div>
+                        <div class="spec-row">
+                            <span>Cover Choice:</span>
+                            <strong id="summary-cover">Premium Softcover</strong>
+                        </div>
+                        <div class="spec-row">
+                            <span>Size Format:</span>
+                            <strong id="summary-size">A5 Portrait</strong>
+                        </div>
+                        <div class="spec-row">
+                            <span>Paper stock:</span>
+                            <strong id="summary-paper">120 GSM Ivory</strong>
+                        </div>
+                        <div class="spec-row">
+                            <span>Binding:</span>
+                            <strong id="summary-binding">Normal Spiral</strong>
+                        </div>
+                        <div class="spec-row">
+                            <span>Total Pages:</span>
+                            <strong id="summary-page-count">60 Pages</strong>
+                        </div>
+                        <div class="spec-row">
+                            <span>Delivery Area:</span>
+                            <strong id="summary-delivery">Inside Chattogram (+BDT 80)</strong>
+                        </div>
+                    </div>
+
+                    <div class="summary-divider"></div>
+                    
+                    <div class="price-row">
+                        <span>Est. Cost:</span>
+                        <div class="price-box">
+                            <span class="currency">BDT</span>
+                            <span class="price-amount" id="summary-price">690</span>
+                        </div>
+                    </div>
+
+                    <p class="shipping-info"><i class="fa-solid fa-truck-fast"></i> Home Delivery inside & outside Dhaka</p>
+
+                    <button class="btn btn-primary btn-full-width" id="btn-inquire">Send Spec & Order Inquiry</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Philosophy & Quality Section -->
+    <section class="philosophy-section" id="philosophy">
+        <div class="philosophy-bg-accent"></div>
+        <div class="philosophy-container">
+            <div class="philosophy-image">
+                <img src="assets/album.png" alt="Handcrafted spine binding" class="main-philo-img">
+                <div class="badge-float">
+                    <span class="number">100%</span>
+                    <span class="text">Handmade Craft</span>
+                </div>
+            </div>
+            
+            <div class="philosophy-content">
+                <span class="section-subtitle">Our Craft</span>
+                <h2 class="philosophy-title">Bespoke books designed to feel tactile, elegant and timeless.</h2>
+                <p class="philosophy-text">At Prime Pages, we believe that digital pixels fade, but physical prints carry soul. Every notebook we sew, every travel log we align, and every wedding album we bind undergoes thorough manual quality checks.</p>
+                
+                <div class="philosophy-features">
+                    <div class="philo-feat-item">
+                        <div class="philo-icon"><i class="fa-solid fa-feather-pointed"></i></div>
+                        <div>
+                            <h5>Fine Art Paper Options</h5>
+                            <p>We source premium thick ivory & textured art stocks that resist ink bleeding.</p>
+                        </div>
+                    </div>
+                    <div class="philo-feat-item">
+                        <div class="philo-icon"><i class="fa-solid fa-scroll"></i></div>
+                        <div>
+                            <h5>Lay-Flat Thread Binding</h5>
+                            <p>Open your book fully without damaging the spine. Elegant lay-flat spreads.</p>
+                        </div>
+                    </div>
+                    <div class="philo-feat-item">
+                        <div class="philo-icon"><i class="fa-solid fa-leaf"></i></div>
+                        <div>
+                            <h5>Sustainable Sourcing</h5>
+                            <p>FSC-certified papers and eco-friendly covers to care for your memory and nature.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section" id="testimonials">
+        <div class="section-header">
+            <span class="section-subtitle">Stories & Love</span>
+            <h2 class="section-title">What Our Clients Say</h2>
+            <div class="header-line"></div>
+        </div>
+        
+        <div class="testimonials-container">
+            <div class="testimonials-slider">
+                <div class="testimonial-slide active">
+                    <div class="testimonial-card">
+                        <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+                        <p class="testimonial-text">"The spiral bound customized notebook was exactly what I wanted. The paper is extremely premium, gel pens don't bleed at all! Designed my cover with gold foil lettering. Loved the Chattogram delivery speed too."</p>
+                        <div class="testimonial-rating">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar"><span class="avatar-initials">AN</span></div>
+                            <div>
+                                <h4>Abrar Nayeem</h4>
+                                <span>Journaling Enthusiast</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+                        <p class="testimonial-text">"We ordered a travel magazine of our Sajek valley tour. The 200 GSM Glossy Premium paper quality is breathtaking! It feels like a premium international magazine. The layout is cinematic."</p>
+                        <div class="testimonial-rating">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar"><span class="avatar-initials">SR</span></div>
+                            <div>
+                                <h4>Sultana Rahman</h4>
+                                <span>Travel Blogger</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+                        <p class="testimonial-text">"Creating our family photo album with the Premium Lay-flat Board Binding was the best decision. The book lies 180 degrees completely flat, making the large landscape shots look magical. Heirloom quality!"</p>
+                        <div class="testimonial-rating">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar"><span class="avatar-initials">ZM</span></div>
+                            <div>
+                                <h4>Zeeshan Mahmud</h4>
+                                <span>Professional Photographer</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slider-controls">
+                <button class="slider-arrow prev-slide-btn" aria-label="Previous Review"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="slider-dots">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                </div>
+                <button class="slider-arrow next-slide-btn" aria-label="Next Review"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+        <div class="section-header">
+            <span class="section-subtitle">Got Questions?</span>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="header-line"></div>
+        </div>
+
+        <div class="faq-container">
+            <div class="faq-accordion">
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span>How can I ensure my uploaded photo quality is not lost?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-body">
+                        <div class="faq-content">
+                            <p>To preserve absolute maximum resolution and prevent compression, we highly recommend compressing all your images into a single <strong>.zip file</strong> before uploading. Our server stores your zip file completely untouched and uncompressed, so we receive the raw original quality for printing.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span>How long does the printing and delivery take?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-body">
+                        <div class="faq-content">
+                            <p>Typically, printing and custom handcrafted binding takes <strong>3 to 5 business days</strong> depending on the volume. Once shipped, delivery takes <strong>24 to 48 hours</strong> inside Chattogram and <strong>3 to 5 days</strong> outside Chattogram.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span>What is Lay-flat Board Binding and is it good for photo albums?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-body">
+                        <div class="faq-content">
+                            <p>Yes, Lay-flat Board Binding is the premium gold standard for photo albums. Instead of thin sheets bound into a spine that curves, each page consists of thick heavyweight boards bound together so the book opens 180 degrees completely flat. This prevents any photo details from getting lost in the middle spine crease.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span>Can I customize the cover debossing or text?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-body">
+                        <div class="faq-content">
+                            <p>Absolutely! You can specify your desired gold foil debossing text, name embossing, or any custom cover guidelines inside the "Custom Design Requirements / Message" field in the form. Our design specialist will draft mock designs and share them with you before printing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order / Inquiry Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="section-header">
+            <span class="section-subtitle">Start Your Project</span>
+            <h2 class="section-title">Tell Us About Your Vision</h2>
+            <div class="header-line"></div>
+        </div>
+
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Let's Create Together</h3>
+                <p>Submit your configuration directly or get in touch with our design team. Once submitted, we will email you mockup drafts and payment/shipping steps.</p>
+                
+                <div class="contact-details-list">
+                    <div class="info-item">
+                        <span class="info-icon"><i class="fa-solid fa-envelope"></i></span>
+                        <div>
+                            <span>Email Us</span>
+                            <strong>thisisprimepages@gmail.com</strong>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon"><i class="fa-solid fa-phone"></i></span>
+                        <div>
+                            <span>WhatsApp / Call</span>
+                            <strong>+880 1700-000000</strong>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon"><i class="fa-solid fa-location-dot"></i></span>
+                        <div>
+                            <span>Design Studio</span>
+                            <strong>Chattogram, Bangladesh</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="social-links">
+                    <a href="https://www.facebook.com/itsprimepages/" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/prime.pages_/" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+                </div>
+            </div>
+
+            <!-- Inquiry Form -->
+            <div class="contact-form-wrapper">
+                <!-- Replace Form action with your own Formspree / Email handler later -->
+                <!-- We will add JavaScript submission logic to handle validation and submission -->
+                <form id="inquiry-form" class="inquiry-form">
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="user-name">Your Name *</label>
+                            <input type="text" id="user-name" name="name" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group col">
+                            <label for="user-email">Your Email *</label>
+                            <input type="email" id="user-email" name="email" placeholder="john@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="user-phone">Phone Number *</label>
+                            <input type="tel" id="user-phone" name="phone" placeholder="+880 17XXXXXXXX" required>
+                        </div>
+                        <div class="form-group col">
+                            <label for="user-delivery">Delivery Address *</label>
+                            <input type="text" id="user-delivery" name="address" placeholder="Apartment, Street, City" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user-spec">Selected Specifications</label>
+                        <textarea id="user-spec" name="specifications" readonly placeholder="Pick options in design studio above to populate specs automatically"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user-files">Upload Photos / Design Files (ZIP, PDF, or high-res images)</label>
+                        <input type="file" id="user-files" class="config-select" accept=".zip,.rar,.pdf,.jpg,.jpeg,.png" style="padding: 0.5rem; background: rgba(0,0,0,0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; width: 100%;">
+                        <small style="color: var(--text-secondary); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Tip: Compress all your photos into a single .zip file to preserve absolute maximum quality and upload quickly.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user-message">Custom Design Requirements / Message</label>
+                        <textarea id="user-message" name="message" placeholder="Provide link to photo uploads, name debossing text, or customization guidelines..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full-width" id="btn-submit-form">
+                        Send Order Inquiry <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>
+                    </button>
+                </form>
+
+                <!-- Success Screen -->
+                <div id="form-success" class="form-success-overlay hide">
+                    <div class="success-box">
+                        <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <h3>Inquiry Received!</h3>
+                        <p>Thank you for choosing Prime Pages. We have received your design specification. Our design specialist will reach out to you via email shortly.</p>
+                        <button class="btn btn-secondary" onclick="resetForm()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="assets/logo.png" alt="Prime Pages Logo" class="brand-logo footer-brand-logo" id="footer-brand-logo">
+                <p>Bringing back the beauty of tactile prints and tangible moments. Designed in Chattogram.</p>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#calculator">Price Calculator</a></li>
+                    <li><a href="#philosophy">Our Craft</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-newsletter">
+                <h4>Join Our Club</h4>
+                <p>Get catalog releases, custom designs, and storytelling tips in your inbox.</p>
+                <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed!');">
+                    <input type="email" placeholder="Your email address" required>
+                    <button type="submit" aria-label="Subscribe"><i class="fa-solid fa-arrow-right"></i></button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 Prime Pages. All rights reserved. Handcrafted by xSRV-x.</p>
+        </div>
+    </footer>
+
+    <!-- Main JavaScript File -->
+    <script src="app.js"></script>
+</body>
+</html>
