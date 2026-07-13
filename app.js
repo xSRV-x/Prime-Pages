@@ -484,33 +484,6 @@ Estimated Price: BDT ${totalEstimate}`;
                 }
             }
 
-            // Formulate email content for mailto link (as client side fallback)
-            const subject = encodeURIComponent(`Prime Pages Order Inquiry - ${name}`);
-            const body = encodeURIComponent(
-`Order Specifications:
--------------------------
-${specifications}
-
-Uploaded File Link:
--------------------------
-${fileUrl ? fileUrl : 'No file uploaded'}
-
-Customer Details:
--------------------------
-Name: ${name}
-Email: ${email}
-Phone: ${phone}
-Delivery Address: ${address}
-
-Custom Instructions / Notes:
--------------------------
-${userMessage}
-`);
-            
-            // Recipient email
-            const recipientEmail = "thisisprimepages@gmail.com";
-            const mailtoUrl = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
-
             // Save inquiry into database
             const inquiryData = {
                 name,
@@ -530,9 +503,6 @@ ${userMessage}
                 btnSubmitForm.disabled = false;
                 btnSubmitForm.innerHTML = `Send Order Inquiry <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>`;
             }
-
-            // Open mail app
-            window.location.href = mailtoUrl;
 
             // Display custom success overlay
             if (successOverlay) {
