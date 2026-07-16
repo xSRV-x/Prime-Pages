@@ -128,6 +128,7 @@ function initializeDashboard() {
     checkSetupWarning();
     loadAllDashboardData();
     setupSecurityForm();
+    loadModelAssetPreviews();
 }
 
 function checkSetupWarning() {
@@ -639,3 +640,123 @@ function setupSecurityForm() {
         changePasscodeForm.reset();
     });
 }
+
+// Load current model image previews from database/local storage
+async function loadModelAssetPreviews() {
+    const defaultAssets = {
+        'hero_notebook': 'assets/notebook.jpg',
+        'hero_magazine': 'assets/magazine.png',
+        'hero_travel': 'assets/travel.png',
+        'hero_album': 'assets/album.png',
+        'prod_notebook': 'assets/notebook.jpg',
+        'prod_magazine': 'assets/magazine.png',
+        'prod_travel': 'assets/travel.png',
+        'prod_album': 'assets/album.png'
+    };
+
+    let settings = {};
+
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('theme_settings')
+                .select('*');
+            if (data && !error) {
+                data.forEach(item => {
+                    settings[item.key] = item.value;
+                });
+            }
+        } catch (err) {
+            console.error("Failed to load theme settings from Supabase:", err);
+        }
+    }
+
+    // Apply value to preview image elements
+    Object.keys(defaultAssets).forEach(key => {
+        const localVal = localStorage.getItem(`asset_${key}`);
+        const val = settings[key] || localVal || defaultAssets[key];
+        
+        const imgEl = document.getElementById(`prev-${key.replace('_', '-')}`);
+        if (imgEl) imgEl.src = val;
+    });
+}
+window.loadModelAssetPreviews = loadModelAssetPreviews;
+
+// Handle model image upload
+async function uploadModelAsset(inputElement, key) {
+    const file = inputElement.files[0];
+    if (!file) return;
+
+    // Show loading spinner
+    const headerEl = inputElement.parentElement.querySelector('h4');
+    const originalText = headerEl.innerText;
+    headerEl.innerHTML = `<span style="color: var(--accent-gold);"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</span>`;
+    inputElement.disabled = true;
+
+    let publicUrl = "";
+
+    if (isSupabaseConfigured) {
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `assets_${key}_${Date.now()}.${fileExt}`;
+
+            const { data, error } = await supabaseClient.storage
+                .from('order-files')
+                .upload(fileName, file);
+
+            if (!error) {
+                const { data: urlData } = supabaseClient.storage
+                    .from('order-files')
+                    .getPublicUrl(fileName);
+                publicUrl = urlData.publicUrl;
+            } else {
+                console.error("Storage upload failed:", error);
+                alert("Upload failed: " + error.message);
+            }
+        } catch (err) {
+            console.error("Storage error:", err);
+            alert("Upload error: " + err.message);
+        }
+    } else {
+        // Fallback: Local Base64 storage in Mock Mode
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            publicUrl = e.target.result;
+            localStorage.setItem(`asset_${key}`, publicUrl);
+            
+            const imgEl = document.getElementById(`prev-${key.replace('_', '-')}`);
+            if (imgEl) imgEl.src = publicUrl;
+
+            headerEl.innerText = originalText;
+            inputElement.disabled = false;
+            alert("Image updated locally in browser cache!");
+        };
+        reader.readAsDataURL(file);
+        return;
+    }
+
+    if (publicUrl) {
+        try {
+            const { error } = await supabaseClient
+                .from('theme_settings')
+                .upsert({ key: key, value: publicUrl });
+
+            if (!error) {
+                const imgEl = document.getElementById(`prev-${key.replace('_', '-')}`);
+                if (imgEl) imgEl.src = publicUrl;
+                alert("Image uploaded and updated successfully!");
+            } else {
+                console.error("Database upsert failed:", error);
+                alert("Saved to storage, but failed to update database entry. Make sure you run the SQL table creation query.");
+            }
+        } catch (err) {
+            console.error("Database connection error:", err);
+            alert("Database connection failed: " + err.message);
+        }
+    }
+
+    // Restore text and state
+    headerEl.innerText = originalText;
+    inputElement.disabled = false;
+}
+window.uploadModelAsset = uploadModelAsset;

@@ -649,9 +649,71 @@ async function loadDynamicData() {
     const prices = await fetchPrices();
     applyPricesToUI(prices);
 
-    // 2. Fetch and apply portfolio showcase items
+    // 2. Apply theme model assets
+    await applyThemeSettings();
+
+    // 3. Fetch and apply portfolio showcase items
     const showcaseItems = await fetchShowcase();
     renderPortfolioShowcase(showcaseItems);
+}
+
+// Apply Theme Asset Settings (Hero Slider & Product Showcase Cards)
+async function applyThemeSettings() {
+    const defaultAssets = {
+        'hero_notebook': 'assets/notebook.jpg',
+        'hero_magazine': 'assets/magazine.png',
+        'hero_travel': 'assets/travel.png',
+        'hero_album': 'assets/album.png',
+        'prod_notebook': 'assets/notebook.jpg',
+        'prod_magazine': 'assets/magazine.png',
+        'prod_travel': 'assets/travel.png',
+        'prod_album': 'assets/album.png'
+    };
+
+    let settings = {};
+
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('theme_settings')
+                .select('*');
+            if (data && !error) {
+                data.forEach(item => {
+                    settings[item.key] = item.value;
+                });
+            }
+        } catch (err) {
+            console.log("Failed to load theme settings from Supabase, using local cache / defaults.");
+        }
+    }
+
+    // Apply the settings to DOM elements
+    Object.keys(defaultAssets).forEach(key => {
+        const localVal = localStorage.getItem(`asset_${key}`);
+        const val = settings[key] || localVal || defaultAssets[key];
+
+        if (key.startsWith('hero_')) {
+            const indexMap = {
+                'hero_notebook': '0',
+                'hero_magazine': '1',
+                'hero_travel': '2',
+                'hero_album': '3'
+            };
+            const idx = indexMap[key];
+            const slideImg = document.querySelector(`.gallery-card[data-index="${idx}"] img`);
+            if (slideImg) slideImg.src = val;
+        } else if (key.startsWith('prod_')) {
+            const prodMap = {
+                'prod_notebook': 'notebook',
+                'prod_magazine': 'magazine',
+                'prod_travel': 'travel',
+                'prod_album': 'album'
+            };
+            const prodVal = prodMap[key];
+            const prodImg = document.querySelector(`.product-card[data-product="${prodVal}"] .product-image`);
+            if (prodImg) prodImg.src = val;
+        }
+    });
 }
 
 // Fetch Prices

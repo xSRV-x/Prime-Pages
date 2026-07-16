@@ -128,3 +128,27 @@ If you have already set up your database and want to support cross-device **pass
 ALTER TABLE prices ADD COLUMN IF NOT EXISTS admin_passcode text DEFAULT 'admin123';
 ```
 
+---
+
+## 8. Model & Showcase Theme Settings (Dynamic Images)
+To allow changing the model images on the landing page (Hero Slider & Product Cards) dynamically, copy and run this script in your Supabase **SQL Editor**:
+```sql
+CREATE TABLE IF NOT EXISTS theme_settings (
+    key text PRIMARY KEY,
+    value text NOT NULL,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Seed default model assets
+INSERT INTO theme_settings (key, value) VALUES
+('hero_notebook', 'assets/notebook.jpg'),
+('hero_magazine', 'assets/magazine.png'),
+('hero_travel', 'assets/travel.png'),
+('hero_album', 'assets/album.png'),
+('prod_notebook', 'assets/notebook.jpg'),
+('prod_magazine', 'assets/magazine.png'),
+('prod_travel', 'assets/travel.png'),
+('prod_album', 'assets/album.png')
+ON CONFLICT (key) DO NOTHING;
+```
+
