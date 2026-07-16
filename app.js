@@ -652,7 +652,10 @@ async function loadDynamicData() {
     // 2. Apply theme model assets
     await applyThemeSettings();
 
-    // 3. Fetch and apply portfolio showcase items
+    // 3. Apply product showcase sliders
+    await applyProductSliders();
+
+    // 4. Fetch and apply portfolio showcase items
     const showcaseItems = await fetchShowcase();
     renderPortfolioShowcase(showcaseItems);
 }
@@ -712,6 +715,127 @@ async function applyThemeSettings() {
             const prodVal = prodMap[key];
             const prodImg = document.querySelector(`.product-card[data-product="${prodVal}"] .product-image`);
             if (prodImg) prodImg.src = val;
+        }
+    });
+}
+
+// Active slide index store for product showcases
+const productSlideIndices = {
+    notebook: 0,
+    magazine: 0,
+    travel: 0,
+    album: 0
+};
+
+function showProductSlide(productType, index) {
+    const track = document.querySelector(`.product-slider-track[data-product="${productType}"]`);
+    if (!track) return;
+
+    const slides = track.querySelectorAll('.product-image');
+    if (slides.length <= 1) return;
+
+    let nextIndex = index;
+    if (nextIndex >= slides.length) nextIndex = 0;
+    if (nextIndex < 0) nextIndex = slides.length - 1;
+
+    productSlideIndices[productType] = nextIndex;
+
+    slides.forEach((slide, idx) => {
+        if (idx === nextIndex) {
+            slide.classList.add('active');
+        } else {
+            slide.classList.remove('active');
+        }
+    });
+}
+
+function prevProductSlide(productType, event) {
+    if (event) event.stopPropagation();
+    showProductSlide(productType, productSlideIndices[productType] - 1);
+}
+
+function nextProductSlide(productType, event) {
+    if (event) event.stopPropagation();
+    showProductSlide(productType, productSlideIndices[productType] + 1);
+}
+
+window.prevProductSlide = prevProductSlide;
+window.nextProductSlide = nextProductSlide;
+
+// Retrieve and render slides in the catalog grids
+async function applyProductSliders() {
+    const defaultAssets = {
+        'notebook': ['assets/notebook.jpg'],
+        'magazine': ['assets/magazine.png'],
+        'travel': ['assets/travel.png'],
+        'album': ['assets/album.png']
+    };
+
+    let settings = {
+        notebook: [],
+        magazine: [],
+        travel: [],
+        album: []
+    };
+
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('product_images')
+                .select('*')
+                .order('sort_order', { ascending: true })
+                .order('created_at', { ascending: true });
+
+            if (data && !error) {
+                data.forEach(item => {
+                    if (settings[item.product_type]) {
+                        settings[item.product_type].push(item.image_url);
+                    }
+                });
+            }
+        } catch (err) {
+            console.log("Failed to load product slides from Supabase:", err);
+        }
+    }
+
+    const products = ['notebook', 'magazine', 'travel', 'album'];
+    products.forEach(prod => {
+        const localVal = localStorage.getItem(`prod_slides_${prod}`);
+        let urls = [];
+
+        if (settings[prod] && settings[prod].length > 0) {
+            urls = settings[prod];
+        } else if (localVal) {
+            urls = JSON.parse(localVal);
+        } else {
+            // Check if there is a custom single asset loaded in applyThemeSettings
+            const legacyCustomAsset = localStorage.getItem(`asset_prod_${prod}`);
+            if (legacyCustomAsset) {
+                urls = [legacyCustomAsset];
+            } else {
+                urls = defaultAssets[prod];
+            }
+        }
+
+        const track = document.querySelector(`.product-slider-track[data-product="${prod}"]`);
+        if (track) {
+            track.innerHTML = urls.map((url, idx) => `
+                <img src="${url}" class="product-image ${idx === 0 ? 'active' : ''}" alt="${prod} Showcase">
+            `).join('');
+
+            // Hide navigation arrows if there is only 1 slide
+            const wrapper = track.parentElement;
+            const prevBtn = wrapper.querySelector('.prod-slider-btn.prev');
+            const nextBtn = wrapper.querySelector('.prod-slider-btn.next');
+            if (prevBtn && nextBtn) {
+                if (urls.length <= 1) {
+                    prevBtn.style.display = 'none';
+                    nextBtn.style.display = 'none';
+                } else {
+                    prevBtn.style.display = 'flex';
+                    nextBtn.style.display = 'flex';
+                }
+            }
         }
     });
 }

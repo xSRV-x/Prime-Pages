@@ -129,6 +129,7 @@ function initializeDashboard() {
     loadAllDashboardData();
     setupSecurityForm();
     loadModelAssetPreviews();
+    loadProductSlidesLists();
 }
 
 function checkSetupWarning() {
@@ -760,3 +761,215 @@ async function uploadModelAsset(inputElement, key) {
     inputElement.disabled = false;
 }
 window.uploadModelAsset = uploadModelAsset;
+
+// Load and render product slide lists inside administration panel
+async function loadProductSlidesLists() {
+    const defaultAssets = {
+        'notebook': ['assets/notebook.jpg'],
+        'magazine': ['assets/magazine.png'],
+        'travel': ['assets/travel.png'],
+        'album': ['assets/album.png']
+    };
+
+    let settings = {
+        notebook: [],
+        magazine: [],
+        travel: [],
+        album: []
+    };
+
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('product_images')
+                .select('*')
+                .order('sort_order', { ascending: true })
+                .order('created_at', { ascending: true });
+
+            if (data && !error) {
+                data.forEach(item => {
+                    if (settings[item.product_type]) {
+                        settings[item.product_type].push({ id: item.id, url: item.image_url });
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("Failed to load product slides list:", err);
+        }
+    }
+
+    const products = ['notebook', 'magazine', 'travel', 'album'];
+    products.forEach(prod => {
+        const localVal = localStorage.getItem(`prod_slides_${prod}`);
+        let slides = []; // Array of {id, url}
+
+        if (settings[prod] && settings[prod].length > 0) {
+            slides = settings[prod];
+        } else if (localVal) {
+            const urls = JSON.parse(localVal);
+            slides = urls.map((url, idx) => ({ id: idx, url: url }));
+        } else {
+            // Check legacy custom asset
+            const legacyCustomAsset = localStorage.getItem(`asset_prod_${prod}`);
+            if (legacyCustomAsset) {
+                slides = [{ id: 0, url: legacyCustomAsset }];
+            } else {
+                slides = defaultAssets[prod].map((url, idx) => ({ id: idx, url: url }));
+            }
+        }
+
+        const listContainer = document.getElementById(`slides-list-${prod}`);
+        if (listContainer) {
+            if (slides.length === 0) {
+                listContainer.innerHTML = `<span style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">No custom images uploaded. Showing defaults.</span>`;
+            } else {
+                listContainer.innerHTML = slides.map(slide => `
+                    <div style="position: relative; width: 75px; height: 75px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-color); background: rgba(0,0,0,0.4);">
+                        <img src="${slide.url}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <button onclick="deleteProductSlide(${typeof slide.id === 'string' ? `'${slide.id}'` : slide.id}, '${prod}')" style="position: absolute; top: 2px; right: 2px; background: rgba(239, 68, 68, 0.95); border: none; color: #fff; border-radius: 3px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; transition: background 0.2s;" title="Remove Slide">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+    });
+}
+window.loadProductSlidesLists = loadProductSlidesLists;
+
+// Handle product slide image upload
+async function uploadProductSlide(inputElement, productType) {
+    const file = inputElement.files[0];
+    if (!file) return;
+
+    // Show loading spinner
+    const btn = inputElement.parentElement.querySelector('button');
+    const originalText = btn.innerText;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Uploading...`;
+    btn.disabled = true;
+
+    let publicUrl = "";
+
+    if (isSupabaseConfigured) {
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `slides_${productType}_${Date.now()}.${fileExt}`;
+
+            const { data, error } = await supabaseClient.storage
+                .from('order-files')
+                .upload(fileName, file);
+
+            if (!error) {
+                const { data: urlData } = supabaseClient.storage
+                    .from('order-files')
+                    .getPublicUrl(fileName);
+                publicUrl = urlData.publicUrl;
+            } else {
+                console.error("Storage upload failed:", error);
+                alert("Upload failed: " + error.message);
+            }
+        } catch (err) {
+            console.error("Storage error:", err);
+            alert("Upload error: " + err.message);
+        }
+    } else {
+        // Fallback: Local Base64 storage in Mock Mode
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            publicUrl = e.target.result;
+            
+            const localVal = localStorage.getItem(`prod_slides_${productType}`) || "[]";
+            const urls = JSON.parse(localVal);
+            urls.push(publicUrl);
+            localStorage.setItem(`prod_slides_${productType}`, JSON.stringify(urls));
+
+            btn.innerText = originalText;
+            btn.disabled = false;
+            inputElement.value = ""; // Clear file selector input
+            
+            loadProductSlidesLists();
+            alert("Slide added locally in Mock Mode!");
+        };
+        reader.readAsDataURL(file);
+        return;
+    }
+
+    if (publicUrl) {
+        try {
+            // Find current highest sort order to append
+            const { data: existing } = await supabaseClient
+                .from('product_images')
+                .select('sort_order')
+                .eq('product_type', productType);
+                
+            let maxOrder = 0;
+            if (existing && existing.length > 0) {
+                maxOrder = Math.max(...existing.map(s => s.sort_order || 0)) + 1;
+            }
+
+            const { error } = await supabaseClient
+                .from('product_images')
+                .insert({
+                    product_type: productType,
+                    image_url: publicUrl,
+                    sort_order: maxOrder
+                });
+
+            if (!error) {
+                loadProductSlidesLists();
+                alert("Slide added and uploaded successfully!");
+            } else {
+                console.error("Database insert failed:", error);
+                alert("Saved to storage, but failed to insert database row. Check if the product_images table is created.");
+            }
+        } catch (err) {
+            console.error("Database connection error:", err);
+            alert("Database connection failed: " + err.message);
+        }
+    }
+
+    // Restore button state
+    btn.innerText = originalText;
+    btn.disabled = false;
+    inputElement.value = "";
+}
+window.uploadProductSlide = uploadProductSlide;
+
+// Handle product slide deletion
+async function deleteProductSlide(id, productType) {
+    if (!confirm("Are you sure you want to remove this slide?")) return;
+
+    if (isSupabaseConfigured) {
+        // If ID is numeric (from Supabase)
+        if (typeof id === 'number') {
+            try {
+                const { error } = await supabaseClient
+                    .from('product_images')
+                    .delete()
+                    .eq('id', id);
+
+                if (!error) {
+                    loadProductSlidesLists();
+                    return;
+                }
+                console.error("Database slide delete failed:", error);
+                alert("Database delete failed: " + error.message);
+            } catch (err) {
+                console.error("Database delete error:", err);
+                alert("Database delete error: " + err.message);
+            }
+        }
+    }
+
+    // Fallback: Local delete (ID represents the index in the local mock array)
+    const localVal = localStorage.getItem(`prod_slides_${productType}`);
+    if (localVal) {
+        const urls = JSON.parse(localVal);
+        urls.splice(id, 1);
+        localStorage.setItem(`prod_slides_${productType}`, JSON.stringify(urls));
+        loadProductSlidesLists();
+    } else {
+        alert("Cannot remove default seeded slides in Mock Mode. Please upload your own custom slides first.");
+    }
+}
+window.deleteProductSlide = deleteProductSlide;

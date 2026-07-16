@@ -152,3 +152,24 @@ INSERT INTO theme_settings (key, value) VALUES
 ON CONFLICT (key) DO NOTHING;
 ```
 
+---
+
+## 9. Product Catalog Slider Images
+To support multiple sliding images for each product card, copy and run this script in your Supabase **SQL Editor**:
+```sql
+CREATE TABLE IF NOT EXISTS product_images (
+    id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    product_type text NOT NULL, -- 'notebook', 'magazine', 'travel', 'album'
+    image_url text NOT NULL,
+    sort_order integer DEFAULT 0,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Seed initial catalog slide images
+INSERT INTO product_images (product_type, image_url, sort_order) VALUES
+('notebook', 'assets/notebook.jpg', 0),
+('magazine', 'assets/magazine.png', 0),
+('travel', 'assets/travel.png', 0),
+('album', 'assets/album.png', 0);
+```
+

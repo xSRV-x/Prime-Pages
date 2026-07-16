@@ -109,7 +109,11 @@
             <!-- Product 1 -->
             <div class="product-card" data-product="notebook">
                 <div class="product-img-wrapper">
-                    <img src="assets/notebook.jpg" alt="Customized Notebook" class="product-image">
+                    <div class="product-slider-track" data-product="notebook">
+                        <img src="assets/notebook.jpg" alt="Customized Notebook" class="product-image active">
+                    </div>
+                    <button class="prod-slider-btn prev" onclick="prevProductSlide('notebook', event)" aria-label="Previous image"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="prod-slider-btn next" onclick="nextProductSlide('notebook', event)" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>
                     <div class="product-overlay">
                         <button class="btn btn-card-action" onclick="quickSelect('notebook')">Configure Now</button>
                     </div>
@@ -128,7 +132,11 @@
             <!-- Product 2 -->
             <div class="product-card" data-product="magazine">
                 <div class="product-img-wrapper">
-                    <img src="assets/magazine.png" alt="Photo Magazine" class="product-image">
+                    <div class="product-slider-track" data-product="magazine">
+                        <img src="assets/magazine.png" alt="Photo Magazine" class="product-image active">
+                    </div>
+                    <button class="prod-slider-btn prev" onclick="prevProductSlide('magazine', event)" aria-label="Previous image"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="prod-slider-btn next" onclick="nextProductSlide('magazine', event)" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>
                     <div class="product-overlay">
                         <button class="btn btn-card-action" onclick="quickSelect('magazine')">Configure Now</button>
                     </div>
@@ -147,7 +155,11 @@
             <!-- Product 3 -->
             <div class="product-card" data-product="travel">
                 <div class="product-img-wrapper">
-                    <img src="assets/travel.png" alt="Travel Magazine" class="product-image">
+                    <div class="product-slider-track" data-product="travel">
+                        <img src="assets/travel.png" alt="Travel Magazine" class="product-image active">
+                    </div>
+                    <button class="prod-slider-btn prev" onclick="prevProductSlide('travel', event)" aria-label="Previous image"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="prod-slider-btn next" onclick="nextProductSlide('travel', event)" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>
                     <div class="product-overlay">
                         <button class="btn btn-card-action" onclick="quickSelect('travel')">Configure Now</button>
                     </div>
@@ -166,7 +178,11 @@
             <!-- Product 4 -->
             <div class="product-card" data-product="album">
                 <div class="product-img-wrapper">
-                    <img src="assets/album.png" alt="Family Photo Album" class="product-image">
+                    <div class="product-slider-track" data-product="album">
+                        <img src="assets/album.png" alt="Family Photo Album" class="product-image active">
+                    </div>
+                    <button class="prod-slider-btn prev" onclick="prevProductSlide('album', event)" aria-label="Previous image"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="prod-slider-btn next" onclick="nextProductSlide('album', event)" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>
                     <div class="product-overlay">
                         <button class="btn btn-card-action" onclick="quickSelect('album')">Configure Now</button>
                     </div>
