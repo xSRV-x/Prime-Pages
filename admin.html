@@ -628,22 +628,41 @@
             </div>
 
             <div class="admin-form" style="max-width: 500px;">
-                <h3 style="margin-bottom: 1.5rem; font-size: 1.3rem; color: #fff;">Change Admin Passcode</h3>
-                <form id="change-passcode-form">
-                    <div class="form-group" style="margin-bottom: 1.25rem;">
-                        <label for="current-passcode" style="display: block; margin-bottom: 0.5rem;">Current Passcode *</label>
-                        <input type="password" id="current-passcode" required placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 1.25rem;">
-                        <label for="new-passcode" style="display: block; margin-bottom: 0.5rem;">New Passcode *</label>
-                        <input type="password" id="new-passcode" required placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label for="confirm-new-passcode" style="display: block; margin-bottom: 0.5rem;">Confirm New Passcode *</label>
-                        <input type="password" id="confirm-new-passcode" required placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full-width">Update Passcode</button>
-                </form>
+                <!-- Supabase Live Mode: Change Account Password -->
+                <div id="security-supabase" style="display: none;">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.3rem; color: #fff;">Change Account Password</h3>
+                    <form id="change-password-supabase-form">
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label for="new-password" style="display: block; margin-bottom: 0.5rem;">New Password *</label>
+                            <input type="password" id="new-password" required placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="confirm-new-password" style="display: block; margin-bottom: 0.5rem;">Confirm New Password *</label>
+                            <input type="password" id="confirm-new-password" required placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full-width">Update Password</button>
+                    </form>
+                </div>
+
+                <!-- Local Mock Mode: Change Admin Passcode -->
+                <div id="security-local">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.3rem; color: #fff;">Change Admin Passcode</h3>
+                    <form id="change-passcode-form">
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label for="current-passcode" style="display: block; margin-bottom: 0.5rem;">Current Passcode *</label>
+                            <input type="password" id="current-passcode" required placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label for="new-passcode" style="display: block; margin-bottom: 0.5rem;">New Passcode *</label>
+                            <input type="password" id="new-passcode" required placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="confirm-new-passcode" style="display: block; margin-bottom: 0.5rem;">Confirm New Passcode *</label>
+                            <input type="password" id="confirm-new-passcode" required placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full-width">Update Passcode</button>
+                    </form>
+                </div>
             </div>
         </section>
 

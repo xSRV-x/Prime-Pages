@@ -642,67 +642,97 @@ async function updateInquiryStatus(key, newStatus) {
 window.updateInquiryStatus = updateInquiryStatus;
 
 function setupSecurityForm() {
-    const changePasscodeForm = document.getElementById('change-passcode-form');
-    if (!changePasscodeForm) return;
+    const secSupabase = document.getElementById('security-supabase');
+    const secLocal = document.getElementById('security-local');
 
-    changePasscodeForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const currentPass = document.getElementById('current-passcode').value.trim();
-        const newPass = document.getElementById('new-passcode').value.trim();
-        const confirmNewPass = document.getElementById('confirm-new-passcode').value.trim();
+    if (isSupabaseConfigured) {
+        if (secSupabase) secSupabase.style.display = 'block';
+        if (secLocal) secLocal.style.display = 'none';
+    } else {
+        if (secSupabase) secSupabase.style.display = 'none';
+        if (secLocal) secLocal.style.display = 'block';
+    }
 
-        if (typeof window.getAdminPasscode !== 'function') {
-            alert("Security system initialization error.");
-            return;
-        }
+    // 1. Supabase Mode User Password Change
+    const changePasswordForm = document.getElementById('change-password-supabase-form');
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPassword = document.getElementById('new-password').value;
+            const confirmNewPassword = document.getElementById('confirm-new-password').value;
 
-        const correctPasscode = await window.getAdminPasscode();
+            if (newPassword !== confirmNewPassword) {
+                alert("New passwords do not match!");
+                return;
+            }
 
-        if (currentPass !== correctPasscode) {
-            alert("Current passcode is incorrect!");
-            return;
-        }
+            if (newPassword.length < 6) {
+                alert("Password must be at least 6 characters long.");
+                return;
+            }
 
-        if (newPass !== confirmNewPass) {
-            alert("New passcode and confirmation do not match!");
-            return;
-        }
+            // Disable button
+            const submitBtn = changePasswordForm.querySelector('button');
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Updating...';
 
-        if (newPass.length < 4) {
-            alert("New passcode must be at least 4 characters long.");
-            return;
-        }
-
-        // Save new passcode locally
-        localStorage.setItem('prime_pages_admin_passcode', newPass);
-
-        if (isSupabaseConfigured) {
             try {
-                // Update prices table with new passcode
-                const { data: pricesList } = await supabaseClient.from('prices').select('id');
-                const priceRecordId = (pricesList && pricesList.length > 0) ? pricesList[0].id : 1;
-
-                const { error } = await supabaseClient
-                    .from('prices')
-                    .update({ admin_passcode: newPass })
-                    .eq('id', priceRecordId);
+                const { data, error } = await supabaseClient.auth.updateUser({
+                    password: newPassword
+                });
 
                 if (error) {
-                    console.error("Supabase passcode save failed:", error.message);
-                    alert("Passcode updated locally in this browser. To sync across all devices, run the SQL query to add the passcode column in your Supabase Dashboard.");
+                    alert("Failed to update password: " + error.message);
                 } else {
-                    alert("Passcode updated successfully and synced to Supabase Cloud!");
+                    alert("Admin password updated successfully in Supabase Cloud!");
+                    changePasswordForm.reset();
                 }
             } catch (err) {
-                console.error("Database save failed:", err);
-                alert("Passcode updated locally. (Supabase sync failed: admin_passcode column might not exist yet).");
+                alert("Database connection error: " + err.message);
             }
-        } else {
-            alert("Passcode updated locally in Mock Mode!");
-        }
 
-        changePasscodeForm.reset();
-    });
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Update Password';
+        });
+    }
+
+    // 2. Local Mode Passcode Change
+    const changePasscodeForm = document.getElementById('change-passcode-form');
+    if (changePasscodeForm) {
+        changePasscodeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const currentPass = document.getElementById('current-passcode').value.trim();
+            const newPass = document.getElementById('new-passcode').value.trim();
+            const confirmNewPass = document.getElementById('confirm-new-passcode').value.trim();
+
+            if (typeof window.getAdminPasscode !== 'function') {
+                alert("Security system initialization error.");
+                return;
+            }
+
+            const correctPasscode = await window.getAdminPasscode();
+
+            if (currentPass !== correctPasscode) {
+                alert("Current passcode is incorrect!");
+                return;
+            }
+
+            if (newPass !== confirmNewPass) {
+                alert("New passcode and confirmation do not match!");
+                return;
+            }
+
+            if (newPass.length < 4) {
+                alert("New passcode must be at least 4 characters long.");
+                return;
+            }
+
+            // Save new passcode locally
+            localStorage.setItem('prime_pages_admin_passcode', newPass);
+            alert("Passcode updated locally in Mock Mode!");
+            changePasscodeForm.reset();
+        });
+    }
 }
 
 // Load current model image previews from database/local storage
