@@ -173,3 +173,60 @@ INSERT INTO product_images (product_type, image_url, sort_order) VALUES
 ('album', 'assets/album.png', 0);
 ```
 
+---
+
+## 10. Enable Row-Level Security (RLS) & Policies
+To resolve security vulnerability alerts and protect your website databases from unauthorized editing or deletion, copy and run the following script in your Supabase **SQL Editor** to enable RLS and set policies:
+
+```sql
+-- 1. Enable Row-Level Security (RLS) on all tables
+ALTER TABLE prices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE showcase ENABLE ROW LEVEL SECURITY;
+ALTER TABLE inquiries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE theme_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_images ENABLE ROW LEVEL SECURITY;
+
+-- 2. Policies for 'prices' table
+CREATE POLICY "Allow public read access to prices" ON prices
+    FOR SELECT TO anon, authenticated USING (true);
+
+CREATE POLICY "Allow authenticated admin to update prices" ON prices
+    FOR UPDATE TO authenticated USING (true);
+
+-- 3. Policies for 'showcase' table
+CREATE POLICY "Allow public read access to showcase" ON showcase
+    FOR SELECT TO anon, authenticated USING (true);
+
+CREATE POLICY "Allow authenticated admin to manage showcase" ON showcase
+    FOR ALL TO authenticated USING (true);
+
+-- 4. Policies for 'theme_settings' table
+CREATE POLICY "Allow public read access to theme_settings" ON theme_settings
+    FOR SELECT TO anon, authenticated USING (true);
+
+CREATE POLICY "Allow authenticated admin to manage theme_settings" ON theme_settings
+    FOR ALL TO authenticated USING (true);
+
+-- 5. Policies for 'product_images' table
+CREATE POLICY "Allow public read access to product_images" ON product_images
+    FOR SELECT TO anon, authenticated USING (true);
+
+CREATE POLICY "Allow authenticated admin to manage product_images" ON product_images
+    FOR ALL TO authenticated USING (true);
+
+-- 6. Policies for 'inquiries' table
+CREATE POLICY "Allow anonymous users to submit inquiries" ON inquiries
+    FOR INSERT TO anon WITH CHECK (true);
+
+CREATE POLICY "Allow authenticated admin to view and manage inquiries" ON inquiries
+    FOR ALL TO authenticated USING (true);
+
+-- 7. Policies for Storage Bucket 'order-files' (Tighten download access)
+-- Drop old anonymous download policy first if it exists
+DROP POLICY IF EXISTS "Allow public download" ON storage.objects;
+
+-- Allow only authenticated admin to read/download bucket files
+CREATE POLICY "Allow admin download" ON storage.objects
+    FOR SELECT TO authenticated USING (bucket_id = 'order-files');
+```
+

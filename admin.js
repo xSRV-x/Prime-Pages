@@ -47,14 +47,35 @@ if (SUPABASE_URL && SUPABASE_ANON_KEY && typeof supabase !== 'undefined') {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // 1. Password Protection & Session Persistence
     const loginWrapper = document.getElementById('login-wrapper');
     const loginForm = document.getElementById('login-form');
+    
+    // Form fields
+    const loginFieldsSupabase = document.getElementById('login-fields-supabase');
+    const loginFieldsLocal = document.getElementById('login-fields-local');
+    const emailField = document.getElementById('login-email');
+    const passwordField = document.getElementById('login-password');
     const passcodeField = document.getElementById('passcode');
     
     const adminSidebar = document.getElementById('admin-sidebar');
     const adminMain = document.getElementById('admin-main');
+
+    // Toggle fields based on Supabase configuration
+    if (isSupabaseConfigured) {
+        if (loginFieldsSupabase) loginFieldsSupabase.style.display = 'block';
+        if (loginFieldsLocal) loginFieldsLocal.style.display = 'none';
+        if (emailField) emailField.required = true;
+        if (passwordField) passwordField.required = true;
+        if (passcodeField) passcodeField.required = false;
+    } else {
+        if (loginFieldsSupabase) loginFieldsSupabase.style.display = 'none';
+        if (loginFieldsLocal) loginFieldsLocal.style.display = 'block';
+        if (emailField) emailField.required = false;
+        if (passwordField) passwordField.required = false;
+        if (passcodeField) passcodeField.required = true;
+    }
 
     async function getAdminPasscode() {
         // Check local storage first
@@ -94,28 +115,70 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const passcode = passcodeField.value.trim();
             
-            const correctPasscode = await getAdminPasscode();
-            if (passcode === correctPasscode) {
-                sessionStorage.setItem('admin_auth', 'true');
-                checkAuth();
+            if (isSupabaseConfigured) {
+                // Supabase Auth Login
+                const email = emailField.value.trim();
+                const password = passwordField.value;
+                
+                try {
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    
+                    if (error) {
+                        alert("Login failed: " + error.message);
+                    } else if (data.session) {
+                        sessionStorage.setItem('admin_auth', 'true');
+                        checkAuth();
+                    }
+                } catch (err) {
+                    alert("Authentication connection error: " + err.message);
+                }
             } else {
-                alert('Invalid Passcode! Please try again.');
-                passcodeField.value = '';
-                passcodeField.focus();
+                // Local passcode fallback
+                const passcode = passcodeField.value.trim();
+                const correctPasscode = await getAdminPasscode();
+                if (passcode === correctPasscode) {
+                    sessionStorage.setItem('admin_auth', 'true');
+                    checkAuth();
+                } else {
+                    alert('Invalid Passcode! Please try again.');
+                    passcodeField.value = '';
+                    passcodeField.focus();
+                }
             }
         });
     }
 
     window.getAdminPasscode = getAdminPasscode;
 
-    window.logoutAdmin = () => {
+    window.logoutAdmin = async () => {
+        if (isSupabaseConfigured) {
+            try {
+                await supabaseClient.auth.signOut();
+            } catch (err) {
+                console.error("Supabase signOut error:", err);
+            }
+        }
         sessionStorage.removeItem('admin_auth');
         checkAuth();
     };
 
     // Run auth check on load
+    if (isSupabaseConfigured) {
+        try {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                sessionStorage.setItem('admin_auth', 'true');
+            } else {
+                sessionStorage.removeItem('admin_auth');
+            }
+        } catch (err) {
+            console.error("Supabase getSession error:", err);
+        }
+    }
     checkAuth();
 });
 

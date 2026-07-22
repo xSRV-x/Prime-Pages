@@ -367,10 +367,26 @@
                 <h1 class="login-title">Prime Pages Admin</h1>
             </div>
             <form id="login-form">
-                <div class="form-group" style="text-align: left;">
-                    <label for="passcode">Enter Admin Passcode</label>
-                    <input type="password" id="passcode" required placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; transition: var(--transition-fast); width: 100%;">
+                <!-- Supabase Mode Inputs (Shown if Supabase is configured) -->
+                <div id="login-fields-supabase" style="display: none; text-align: left;">
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="login-email">Admin Email</label>
+                        <input type="email" id="login-email" placeholder="admin@primepages.com" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
+                    </div>
                 </div>
+
+                <!-- Local Mock Mode Input (Shown if in Mock Mode) -->
+                <div id="login-fields-local" style="text-align: left;">
+                    <div class="form-group">
+                        <label for="passcode">Enter Admin Passcode</label>
+                        <input type="password" id="passcode" placeholder="••••••••" style="background-color: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 0.75rem 1rem; outline: none; width: 100%;">
+                    </div>
+                </div>
+
                 <button type="submit" class="btn btn-primary btn-full-width" style="margin-top: 1.5rem;">Access Dashboard</button>
             </form>
         </div>
