@@ -365,6 +365,15 @@ button, input, select, textarea {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.05);
+    background: linear-gradient(110deg, #0a0a0d 8%, #14141a 18%, #0a0a0d 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+}
+
+@keyframes shimmer {
+    to {
+        background-position-x: -200%;
+    }
 }
 
 .gallery-card {
@@ -480,6 +489,9 @@ button, input, select, textarea {
     position: relative;
     height: 320px;
     overflow: hidden;
+    background: linear-gradient(110deg, #0a0a0d 8%, #14141a 18%, #0a0a0d 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
 }
 
 .product-image {
